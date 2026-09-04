@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
 // ==========================================
-// 1. INITIAL PRODUCTS DATA (Bilingual: Arabic & English)
+// 1. INITIAL PRODUCTS DATA (12 Bilingual Products)
 // ==========================================
 const initialProducts = [
     { 
@@ -232,7 +232,7 @@ const translations = {
 
 export default function App() {
     // ==========================================
-    // 4. STATE MANAGEMENT WITH LOCALSTORAGE
+    // 4. STATE MANAGEMENT & LOCALSTORAGE PERSISTENCE
     // ==========================================
     const [lang, setLang] = useState(() => localStorage.getItem('store_lang') || "ar");
     const [view, setView] = useState("home"); 
@@ -240,9 +240,12 @@ export default function App() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
 
+    // Track if app is installed / opened in Standalone mode
+    const [isAppInstalled, setIsAppInstalled] = useState(false);
     // PWA Install Prompt State
     const [deferredPrompt, setDeferredPrompt] = useState(null);
 
+    // Cart State from LocalStorage
     const [cart, setCart] = useState(() => {
         try {
             const savedCart = localStorage.getItem('store_cart');
@@ -253,11 +256,13 @@ export default function App() {
         }
     });
     
+    // Customer form states from LocalStorage
     const [customerName, setCustomerName] = useState(() => localStorage.getItem('store_cust_name') || "");
     const [customerPhone, setCustomerPhone] = useState(() => localStorage.getItem('store_cust_phone') || "");
     const [customerGovernorate, setCustomerGovernorate] = useState(() => localStorage.getItem('store_cust_gov') || "");
     const [customerAddress, setCustomerAddress] = useState(() => localStorage.getItem('store_cust_addr') || "");
 
+    // Sync States to LocalStorage
     useEffect(() => {
         localStorage.setItem('store_cart', JSON.stringify(cart));
     }, [cart]);
@@ -273,7 +278,16 @@ export default function App() {
         localStorage.setItem('store_cust_addr', customerAddress);
     }, [customerName, customerPhone, customerGovernorate, customerAddress]);
 
+    // Check if running as standalone app (Installed PWA on iOS/Android/Desktop)
     useEffect(() => {
+        const isStandalone = 
+            window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone === true;
+
+        if (isStandalone) {
+            setIsAppInstalled(true);
+        }
+
         const handleBeforeInstallPrompt = (e) => {
             e.preventDefault();
             setDeferredPrompt(e);
@@ -284,12 +298,14 @@ export default function App() {
 
     const t = translations[lang];
 
+    // Handler to Download APK or trigger PWA install
     const handleDownloadApp = () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     setDeferredPrompt(null);
+                    setIsAppInstalled(true);
                 }
             });
         } else {
@@ -355,6 +371,7 @@ export default function App() {
         localStorage.removeItem('store_cart');
     };
 
+    // Clean up items with 0 quantity when returning to home from cart
     const handleContinueShopping = () => {
         setCart(prev => prev.filter(item => item.qty > 0));
         setView("home");
@@ -447,7 +464,7 @@ export default function App() {
         <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans w-full max-w-full overflow-x-hidden transition-all duration-300">
             <div className="w-full flex flex-col min-h-screen">
 
-                {/* ================= COMPACT & RESPONSIVE TOOLBAR (HEADER) ================= */}
+                {/* ================= COMPACT TOOLBAR / HEADER ================= */}
                 <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 md:px-10 py-2.5 sm:py-3.5 flex items-center justify-between shadow-sm w-full">
                     {/* Store Logo & Title */}
                     <div 
@@ -464,7 +481,6 @@ export default function App() {
                             <span className="text-sm sm:text-base md:text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent truncate block">
                                 {t.storeName}
                             </span>
-                            {/* Social Links hidden on mobile to avoid overflow */}
                             <div className="hidden md:flex items-center space-x-2 text-[11px] text-slate-500">
                                 <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-blue-600 transition-colors"><i className="fa-brands fa-facebook"></i> Facebook</a>
                                 <span>•</span>
@@ -473,17 +489,19 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* Right Toolbar Actions (Compact for Mobile) */}
+                    {/* Right Toolbar Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        {/* Download App Button */}
-                        <button 
-                            onClick={handleDownloadApp}
-                            title={t.downloadApp}
-                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 p-2 sm:px-3 sm:py-2 text-xs font-bold transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95 rounded-lg sm:rounded-xl"
-                        >
-                            <i className="fa-solid fa-mobile-screen-button text-emerald-600 text-xs sm:text-sm"></i>
-                            <span className="hidden md:inline">{t.downloadApp}</span>
-                        </button>
+                        {/* Download App Button (Hidden completely if running inside installed app) */}
+                        {!isAppInstalled && (
+                            <button 
+                                onClick={handleDownloadApp}
+                                title={t.downloadApp}
+                                className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 p-2 sm:px-3 sm:py-2 text-xs font-bold transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95 rounded-lg sm:rounded-xl"
+                            >
+                                <i className="fa-solid fa-mobile-screen-button text-emerald-600 text-xs sm:text-sm"></i>
+                                <span className="hidden md:inline">{t.downloadApp}</span>
+                            </button>
+                        )}
 
                         {/* Language Switcher */}
                         <button 
@@ -515,9 +533,10 @@ export default function App() {
                 {/* MAIN CONTENT CONTAINER */}
                 <main className="flex-grow p-3 sm:p-6 md:px-10 py-5 w-full">
 
-                    {/* VIEW 1: HOME PAGE */}
+                    {/* ================= VIEW 1: HOME PAGE ================= */}
                     {view === "home" && (
                         <div className="space-y-6 w-full animate-fadeIn">
+                            {/* Hero Banner */}
                             <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white p-5 md:p-10 text-center space-y-3 shadow-xl rounded-2xl overflow-hidden relative">
                                 <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
                                 <div className="relative z-10 space-y-2 sm:space-y-3">
@@ -529,6 +548,7 @@ export default function App() {
                                 </div>
                             </div>
 
+                            {/* Search & Category Filter */}
                             <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center justify-between">
                                 <div className="relative w-full md:w-96">
                                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
@@ -562,6 +582,7 @@ export default function App() {
                                 </div>
                             </div>
 
+                            {/* Responsive Products Grid (12 Items) */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                                 {filteredProducts.map(product => {
                                     const cartItem = getCartItem(product.id);
@@ -626,7 +647,7 @@ export default function App() {
                         </div>
                     )}
 
-                    {/* VIEW 2: PRODUCT DETAIL PAGE */}
+                    {/* ================= VIEW 2: PRODUCT DETAIL PAGE ================= */}
                     {view === "detail" && selectedProduct && (
                         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-fadeIn">
                             <div className="flex justify-end">
@@ -689,7 +710,7 @@ export default function App() {
                         </div>
                     )}
 
-                    {/* VIEW 3: CART & CHECKOUT PAGE */}
+                    {/* ================= VIEW 3: CART & CHECKOUT PAGE ================= */}
                     {view === "cart" && (
                         <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 animate-fadeIn">
                             <div className="flex items-center justify-between gap-2">
@@ -761,7 +782,7 @@ export default function App() {
                                         );
                                     })}
 
-                                    {/* Order Summary & Customer Form */}
+                                    {/* Order Summary & Form */}
                                     <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl space-y-3 sm:space-y-4 mt-4 sm:mt-6 shadow-lg" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                                         <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm border-b border-slate-200 pb-3">
                                             <div className="flex justify-between text-slate-600">
