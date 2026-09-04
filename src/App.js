@@ -1,5 +1,5 @@
 // Import necessary hooks from React library
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 // ==========================================
 // 1. INITIAL PRODUCTS DATA (Bilingual: Arabic & English)
@@ -133,6 +133,7 @@ const translations = {
         sendWhatsApp: "إرسال الطلب عبر الواتساب (01127808865)",
         cartTitle: "سلة التسوق وإتمام الطلب",
         currency: "EGP",
+        downloadApp: "تحميل التطبيق",
         footer: "TV Screen Store © 2026 | متجر عالي الأداء ومتجاوب بالكامل"
     },
     en: {
@@ -164,28 +165,86 @@ const translations = {
         sendWhatsApp: "Send Order via WhatsApp (01127808865)",
         cartTitle: "Shopping Cart & Checkout",
         currency: "EGP",
+        downloadApp: "Download App",
         footer: "TV Screen Store © 2026 | High Performance Responsive Store"
     }
 };
 
 export default function App() {
     // ==========================================
-    // 4. STATE MANAGEMENT (React Hooks)
+    // 4. STATE MANAGEMENT WITH LOCALSTORAGE
     // ==========================================
-    const [lang, setLang] = useState("ar"); // Default language Arabic
-    const [view, setView] = useState("home"); // "home" | "detail" | "cart"
+    const [lang, setLang] = useState(() => localStorage.getItem('store_lang') || "ar");
+    const [view, setView] = useState("home"); 
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
-    const [cart, setCart] = useState([]);
+
+    // PWA Install Prompt State
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+    const [cart, setCart] = useState(() => {
+        try {
+            const savedCart = localStorage.getItem('store_cart');
+            return savedCart ? JSON.parse(savedCart) : [];
+        } catch (error) {
+            console.error("Error reading cart from localStorage:", error);
+            return [];
+        }
+    });
     
-    // Customer form states
-    const [customerName, setCustomerName] = useState("");
-    const [customerPhone, setCustomerPhone] = useState("");
-    const [customerGovernorate, setCustomerGovernorate] = useState("");
-    const [customerAddress, setCustomerAddress] = useState("");
+    const [customerName, setCustomerName] = useState(() => localStorage.getItem('store_cust_name') || "");
+    const [customerPhone, setCustomerPhone] = useState(() => localStorage.getItem('store_cust_phone') || "");
+    const [customerGovernorate, setCustomerGovernorate] = useState(() => localStorage.getItem('store_cust_gov') || "");
+    const [customerAddress, setCustomerAddress] = useState(() => localStorage.getItem('store_cust_addr') || "");
+
+    useEffect(() => {
+        localStorage.setItem('store_cart', JSON.stringify(cart));
+    }, [cart]);
+
+    useEffect(() => {
+        localStorage.setItem('store_lang', lang);
+    }, [lang]);
+
+    useEffect(() => {
+        localStorage.setItem('store_cust_name', customerName);
+        localStorage.setItem('store_cust_phone', customerPhone);
+        localStorage.setItem('store_cust_gov', customerGovernorate);
+        localStorage.setItem('store_cust_addr', customerAddress);
+    }, [customerName, customerPhone, customerGovernorate, customerAddress]);
+
+    // Listen for PWA Install Prompt on Supported Devices (Android / Chrome)
+    useEffect(() => {
+        const handleBeforeInstallPrompt = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    }, []);
 
     const t = translations[lang];
+
+    // Handler to Download APK or trigger PWA install
+    const handleDownloadApp = () => {
+        if (deferredPrompt) {
+            // If browser supports web installation
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    setDeferredPrompt(null);
+                }
+            });
+        } else {
+            // Direct APK download fallback (looks for app.apk in public folder)
+            const link = document.createElement('a');
+            link.href = '/app.apk'; 
+            link.download = 'TV-Screen-Store.apk';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
 
     // ==========================================
     // 5. SEARCH & FILTER LOGIC
@@ -237,6 +296,12 @@ export default function App() {
 
     const clearCart = () => {
         setCart([]);
+        localStorage.removeItem('store_cart');
+    };
+
+    const handleContinueShopping = () => {
+        setCart(prev => prev.filter(item => item.qty > 0));
+        setView("home");
     };
 
     // ==========================================
@@ -246,7 +311,6 @@ export default function App() {
     const totalItemsCount = activeCartItems.reduce((sum, item) => sum + item.qty, 0);
     const subTotalPrice = activeCartItems.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0);
 
-    // Dynamic Shipping Fee based on Governorate (Cairo, Giza, Qalyubia = 100, Others = 150)
     const getShippingFee = () => {
         if (!customerGovernorate) return 0;
         const lowerGov = customerGovernorate.toLowerCase();
@@ -330,7 +394,13 @@ export default function App() {
                 {/* HEADER SECTION */}
                 <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 md:px-10 py-4 flex items-center justify-between shadow-sm">
                     {/* Store Logo & Branding */}
-                    <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setView("home")}>
+                    <div 
+                        className="flex items-center space-x-3 cursor-pointer group" 
+                        onClick={() => {
+                            setCart(prev => prev.filter(item => item.qty > 0));
+                            setView("home");
+                        }}
+                    >
                         <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-110 transition-transform duration-300 rounded-xl">
                             <i className="fa-solid fa-tv"></i>
                         </div>
@@ -346,21 +416,31 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* Right Header Actions: Language Switcher & Cart */}
-                    <div className="flex items-center space-x-3">
-                        {/* Language Switcher Button */}
+                    {/* Right Header Actions */}
+                    <div className="flex items-center space-x-2 sm:space-x-3">
+                        {/* Download App Button */}
+                        <button 
+                            onClick={handleDownloadApp}
+                            title={t.downloadApp}
+                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 px-3 sm:px-4 py-2 text-xs font-bold transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95 rounded-xl"
+                        >
+                            <i className="fa-solid fa-mobile-screen-button text-emerald-600"></i>
+                            <span className="hidden sm:inline">{t.downloadApp}</span>
+                        </button>
+
+                        {/* Language Switcher */}
                         <button 
                             onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-                            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-4 py-2 text-xs font-bold text-blue-600 transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95 rounded-xl"
+                            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 sm:px-4 py-2 text-xs font-bold text-blue-600 transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95 rounded-xl"
                         >
                             <i className="fa-solid fa-globe"></i>
                             <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
                         </button>
 
-                        {/* Cart Button with animated badge */}
+                        {/* Cart Button */}
                         <button 
                             onClick={() => setView("cart")}
-                            className="relative bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 flex items-center space-x-2 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 group rounded-xl"
+                            className="relative bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2.5 flex items-center space-x-2 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 group rounded-xl"
                         >
                             <i className="fa-solid fa-cart-shopping text-cyan-200 group-hover:scale-110 transition-transform"></i>
                             <span className="font-bold text-sm">{t.cart}</span>
@@ -376,10 +456,9 @@ export default function App() {
                 {/* MAIN CONTENT CONTAINER */}
                 <main className="flex-grow p-4 md:px-10 py-6 w-full">
 
-                    {/* ================= VIEW 1: HOME PAGE ================= */}
+                    {/* VIEW 1: HOME PAGE */}
                     {view === "home" && (
                         <div className="space-y-6 w-full animate-fadeIn">
-                            {/* Hero Banner */}
                             <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white p-6 md:p-10 text-center space-y-3 shadow-xl rounded-2xl overflow-hidden relative">
                                 <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
                                 <div className="relative z-10 space-y-3">
@@ -391,7 +470,6 @@ export default function App() {
                                 </div>
                             </div>
 
-                            {/* Search Bar & Category Filter Buttons */}
                             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                                 <div className="relative w-full md:w-96">
                                     <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 text-sm">
@@ -425,7 +503,6 @@ export default function App() {
                                 </div>
                             </div>
 
-                            {/* Products Responsive Grid */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                                 {filteredProducts.map(product => {
                                     const cartItem = getCartItem(product.id);
@@ -435,7 +512,6 @@ export default function App() {
 
                                     return (
                                         <div key={product.id} className="bg-white border border-slate-200 overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between rounded-none group">
-                                            {/* Product Image & Price Tag (Sharp Corners) */}
                                             <div 
                                                 onClick={() => { setSelectedProduct(product); setView("detail"); }}
                                                 className="h-36 sm:h-48 overflow-hidden relative cursor-pointer bg-slate-100 rounded-none"
@@ -450,14 +526,12 @@ export default function App() {
                                                 </span>
                                             </div>
 
-                                            {/* Product Details & Actions */}
                                             <div className="p-3 sm:p-5 flex flex-col flex-grow justify-between space-y-3">
                                                 <div onClick={() => { setSelectedProduct(product); setView("detail"); }} className={`cursor-pointer space-y-1 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
                                                     <h3 className="font-bold text-xs sm:text-base text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">{productName}</h3>
                                                     <p className="text-slate-500 text-[10px] sm:text-xs line-clamp-2">{productDesc}</p>
                                                 </div>
 
-                                                {/* Add Button or Quantity Adjuster */}
                                                 <div>
                                                     {qty === 0 ? (
                                                         <button 
@@ -493,10 +567,9 @@ export default function App() {
                         </div>
                     )}
 
-                    {/* ================= VIEW 2: PRODUCT DETAIL PAGE ================= */}
+                    {/* VIEW 2: PRODUCT DETAIL PAGE */}
                     {view === "detail" && selectedProduct && (
                         <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
-                            {/* Back to Home button on the right side */}
                             <div className="flex justify-end">
                                 <button 
                                     onClick={() => setView("home")}
@@ -508,7 +581,6 @@ export default function App() {
                             </div>
 
                             <div className="bg-white border border-slate-200 overflow-hidden shadow-2xl rounded-2xl grid grid-cols-1 md:grid-cols-2">
-                                {/* Optimized image size for phone & laptop, strictly sharp corners (rounded-none) */}
                                 <div className="h-56 sm:h-72 md:h-full relative bg-slate-100 rounded-none">
                                     <img src={selectedProduct.image} alt={lang === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn} className="w-full h-full object-cover rounded-none" />
                                 </div>
@@ -558,7 +630,7 @@ export default function App() {
                         </div>
                     )}
 
-                    {/* ================= VIEW 3: CART & CHECKOUT PAGE ================= */}
+                    {/* VIEW 3: CART & CHECKOUT PAGE */}
                     {view === "cart" && (
                         <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
                             <div className="flex items-center justify-between gap-3">
@@ -572,7 +644,7 @@ export default function App() {
                                     </button>
                                 )}
                                 <button 
-                                    onClick={() => setView("home")}
+                                    onClick={handleContinueShopping}
                                     className="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shadow-sm rounded-xl ml-auto"
                                 >
                                     <i className="fa-solid fa-arrow-left"></i>
@@ -670,7 +742,6 @@ export default function App() {
                                                 className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
                                             
-                                            {/* Governorate Search/Select Dropdown */}
                                             <select
                                                 value={customerGovernorate}
                                                 onChange={(e) => setCustomerGovernorate(e.target.value)}
