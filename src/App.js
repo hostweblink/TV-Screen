@@ -64,6 +64,66 @@ const initialProducts = [
         image: "https://images.unsplash.com/photo-1567690187548-f07b1d4bf5a9?w=500&auto=format&fit=crop&q=60", 
         descAr: "شاشة ضخمة بتقنية النقاط الكمومية لإضاءة فائقة السطوع، HDR10+, وألوان سينمائية نابضة بالحياة.",
         descEn: "Massive screen with Quantum Dot technology for ultra-bright illumination, HDR10+, and vivid cinematic colors." 
+    },
+    { 
+        id: 7, 
+        nameAr: "شاشة ألعاب سريعة 24.5 بوصة 360 هرتز", 
+        nameEn: "24.5\" Fast Gaming Monitor 360Hz", 
+        category: "gaming", 
+        price: 11200, 
+        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500&auto=format&fit=crop&q=60", 
+        descAr: "معدل تحديث خارق 360 هرتز للألعاب التنافسية والرياضات الإلكترونية مع زمن استجابة 0.5 مللي ثانية.",
+        descEn: "Blazing 360Hz refresh rate designed for esports and competitive gaming with ultra-low 0.5ms response time." 
+    },
+    { 
+        id: 8, 
+        nameAr: "تلفزيون ذكي 75 بوصة 4K كريستال", 
+        nameEn: "75\" 4K Crystal Smart TV", 
+        category: "tv", 
+        price: 29500, 
+        image: "https://images.unsplash.com/photo-1509281373149-e957c6296406?w=500&auto=format&fit=crop&q=60", 
+        descAr: "شاشة عملاقة بمعالج كريستالي ذكي لتحسين الدقة إلى 4K، مع دعم المساعد الصوتي وتطبيق AirPlay.",
+        descEn: "Gigantic display with crystal processor 4K upscaling, smart voice assistant support, and Apple AirPlay integration." 
+    },
+    { 
+        id: 9, 
+        nameAr: "شاشة عريضة مقوسة 49 بوصة Dual QHD", 
+        nameEn: "49\" Curved Super Ultrawide Monitor Dual QHD", 
+        category: "ultrawide", 
+        price: 32000, 
+        image: "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=500&auto=format&fit=crop&q=60", 
+        descAr: "تجربة بصرية فائقة تعادل شاشتين 27 بوصة مدمجتين، مثالية للتداول، صناعة الموسيقى وإدارة المهام المتعددة.",
+        descEn: "Super ultrawide display equivalent to dual 27-inch setups, perfect for financial trading, music production, and multitasking." 
+    },
+    { 
+        id: 10, 
+        nameAr: "شاشة محمولة 16 بوصة 2K 120 هرتز", 
+        nameEn: "16\" Portable 2K Display 120Hz", 
+        category: "portable", 
+        price: 6200, 
+        image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500&auto=format&fit=crop&q=60", 
+        descAr: "شاشة خفيفة الوزن ونحيفة للغاية بدقة 2K ومعدل 120 هرتز، ممتازة للعمل أثناء السفر ولأجهزة الكونسول المحمولة.",
+        descEn: "Ultra-slim and lightweight 2K 120Hz portable monitor, perfect for remote workflows and handheld gaming consoles." 
+    },
+    { 
+        id: 11, 
+        nameAr: "تلفزيون ذكي 43 بوصة Full HD بنظام أندرويد", 
+        nameEn: "43\" Full HD Smart Android TV", 
+        category: "tv", 
+        price: 9800, 
+        image: "https://images.unsplash.com/photo-1461151304267-38535e780c79?w=500&auto=format&fit=crop&q=60", 
+        descAr: "حجم عملي مناسب لغرف النوم والمكاتب بنظام Android TV مع متجر Google Play وChromecast مدمج.",
+        descEn: "Practical size for bedrooms and offices featuring Android TV OS, built-in Chromecast, and Google Play access." 
+    },
+    { 
+        id: 12, 
+        nameAr: "شاشة ألعاب 27 بوصة IPS 2K 165 هرتز", 
+        nameEn: "27\" 2K QHD Gaming IPS Monitor 165Hz", 
+        category: "gaming", 
+        price: 10400, 
+        image: "https://images.unsplash.com/photo-1616763355548-1b606f43848c?w=500&auto=format&fit=crop&q=60", 
+        descAr: "توازن مثالي بين دقة 2K وزوايا الرؤية الواسعة للوحة IPS مع تقنية FreeSync ومعدل تحديث 165 هرتز.",
+        descEn: "Sweet spot 2K resolution with wide IPS viewing angles, AMD FreeSync technology, and smooth 165Hz refresh rate." 
     }
 ];
 
@@ -213,7 +273,6 @@ export default function App() {
         localStorage.setItem('store_cust_addr', customerAddress);
     }, [customerName, customerPhone, customerGovernorate, customerAddress]);
 
-    // Listen for PWA Install Prompt on Supported Devices (Android / Chrome)
     useEffect(() => {
         const handleBeforeInstallPrompt = (e) => {
             e.preventDefault();
@@ -225,10 +284,8 @@ export default function App() {
 
     const t = translations[lang];
 
-    // Handler to Download APK or trigger PWA install
     const handleDownloadApp = () => {
         if (deferredPrompt) {
-            // If browser supports web installation
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
@@ -236,7 +293,6 @@ export default function App() {
                 }
             });
         } else {
-            // Direct APK download fallback (looks for app.apk in public folder)
             const link = document.createElement('a');
             link.href = '/app.apk'; 
             link.download = 'TV-Screen-Store.apk';
@@ -388,27 +444,28 @@ export default function App() {
     // 9. RENDER JSX COMPONENT
     // ==========================================
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans w-full transition-all duration-300">
+        <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans w-full max-w-full overflow-x-hidden transition-all duration-300">
             <div className="w-full flex flex-col min-h-screen">
 
-                {/* HEADER SECTION */}
-                <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 md:px-10 py-4 flex items-center justify-between shadow-sm">
-                    {/* Store Logo & Branding */}
+                {/* ================= COMPACT & RESPONSIVE TOOLBAR (HEADER) ================= */}
+                <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 md:px-10 py-2.5 sm:py-3.5 flex items-center justify-between shadow-sm w-full">
+                    {/* Store Logo & Title */}
                     <div 
-                        className="flex items-center space-x-3 cursor-pointer group" 
+                        className="flex items-center gap-2 sm:gap-3 cursor-pointer group select-none min-w-0" 
                         onClick={() => {
                             setCart(prev => prev.filter(item => item.qty > 0));
                             setView("home");
                         }}
                     >
-                        <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-110 transition-transform duration-300 rounded-xl">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-black text-base sm:text-xl shadow-md group-hover:scale-105 transition-transform duration-300 rounded-lg sm:rounded-xl">
                             <i className="fa-solid fa-tv"></i>
                         </div>
-                        <div>
-                            <span className="text-lg font-black tracking-wider bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent block">
+                        <div className="min-w-0">
+                            <span className="text-sm sm:text-base md:text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent truncate block">
                                 {t.storeName}
                             </span>
-                            <div className="flex items-center space-x-3 text-xs text-slate-500">
+                            {/* Social Links hidden on mobile to avoid overflow */}
+                            <div className="hidden md:flex items-center space-x-2 text-[11px] text-slate-500">
                                 <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-blue-600 transition-colors"><i className="fa-brands fa-facebook"></i> Facebook</a>
                                 <span>•</span>
                                 <a href="https://wa.me/201127808865" target="_blank" rel="noreferrer" className="hover:text-emerald-600 transition-colors"><i className="fa-brands fa-whatsapp"></i> WhatsApp</a>
@@ -416,36 +473,38 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* Right Header Actions */}
-                    <div className="flex items-center space-x-2 sm:space-x-3">
+                    {/* Right Toolbar Actions (Compact for Mobile) */}
+                    <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                         {/* Download App Button */}
                         <button 
                             onClick={handleDownloadApp}
                             title={t.downloadApp}
-                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 px-3 sm:px-4 py-2 text-xs font-bold transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95 rounded-xl"
+                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 p-2 sm:px-3 sm:py-2 text-xs font-bold transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95 rounded-lg sm:rounded-xl"
                         >
-                            <i className="fa-solid fa-mobile-screen-button text-emerald-600"></i>
-                            <span className="hidden sm:inline">{t.downloadApp}</span>
+                            <i className="fa-solid fa-mobile-screen-button text-emerald-600 text-xs sm:text-sm"></i>
+                            <span className="hidden md:inline">{t.downloadApp}</span>
                         </button>
 
                         {/* Language Switcher */}
                         <button 
                             onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-                            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 px-3 sm:px-4 py-2 text-xs font-bold text-blue-600 transition-all duration-300 cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95 rounded-xl"
+                            title={lang === 'ar' ? 'Switch to English' : 'التحويل للعربية'}
+                            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 p-2 sm:px-3 sm:py-2 text-xs font-bold text-blue-600 transition-all duration-300 cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95 rounded-lg sm:rounded-xl"
                         >
-                            <i className="fa-solid fa-globe"></i>
-                            <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
+                            <i className="fa-solid fa-globe text-xs sm:text-sm"></i>
+                            <span className="hidden sm:inline">{lang === 'ar' ? 'English' : 'العربية'}</span>
+                            <span className="sm:hidden text-[10px] font-black uppercase">{lang === 'ar' ? 'EN' : 'ع'}</span>
                         </button>
 
-                        {/* Cart Button */}
+                        {/* Cart Button with badge */}
                         <button 
                             onClick={() => setView("cart")}
-                            className="relative bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2.5 flex items-center space-x-2 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 group rounded-xl"
+                            className="relative bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-2 sm:px-4 sm:py-2 flex items-center gap-1.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 group rounded-lg sm:rounded-xl"
                         >
-                            <i className="fa-solid fa-cart-shopping text-cyan-200 group-hover:scale-110 transition-transform"></i>
-                            <span className="font-bold text-sm">{t.cart}</span>
+                            <i className="fa-solid fa-cart-shopping text-cyan-200 text-xs sm:text-sm group-hover:scale-110 transition-transform"></i>
+                            <span className="font-bold text-xs sm:text-sm hidden xs:inline">{t.cart}</span>
                             {totalItemsCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-amber-500 text-slate-950 font-black text-xs w-6 h-6 flex items-center justify-center shadow-md animate-bounce rounded-full">
+                                <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 font-black text-[10px] sm:text-xs w-5 h-5 flex items-center justify-center shadow-md animate-bounce rounded-full border border-white">
                                     {totalItemsCount}
                                 </span>
                             )}
@@ -454,25 +513,25 @@ export default function App() {
                 </header>
 
                 {/* MAIN CONTENT CONTAINER */}
-                <main className="flex-grow p-4 md:px-10 py-6 w-full">
+                <main className="flex-grow p-3 sm:p-6 md:px-10 py-5 w-full">
 
                     {/* VIEW 1: HOME PAGE */}
                     {view === "home" && (
                         <div className="space-y-6 w-full animate-fadeIn">
-                            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white p-6 md:p-10 text-center space-y-3 shadow-xl rounded-2xl overflow-hidden relative">
+                            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white p-5 md:p-10 text-center space-y-3 shadow-xl rounded-2xl overflow-hidden relative">
                                 <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
-                                <div className="relative z-10 space-y-3">
-                                    <span className="inline-block bg-white/20 text-white border border-white/30 text-xs px-3 py-1 font-semibold uppercase tracking-wider backdrop-blur-sm rounded-lg">
+                                <div className="relative z-10 space-y-2 sm:space-y-3">
+                                    <span className="inline-block bg-white/20 text-white border border-white/30 text-[10px] sm:text-xs px-2.5 py-0.5 sm:py-1 font-semibold uppercase tracking-wider backdrop-blur-sm rounded-md sm:rounded-lg">
                                         {t.heroBadge}
                                     </span>
-                                    <h1 className="text-3xl md:text-5xl font-black">{t.heroTitle}</h1>
-                                    <p className="text-blue-100 text-sm md:text-base max-w-2xl mx-auto">{t.heroDesc}</p>
+                                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-black leading-tight">{t.heroTitle}</h1>
+                                    <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-2xl mx-auto">{t.heroDesc}</p>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                            <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center justify-between">
                                 <div className="relative w-full md:w-96">
-                                    <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 text-sm">
+                                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
                                         <i className="fa-solid fa-magnifying-glass"></i>
                                     </span>
                                     <input 
@@ -480,11 +539,11 @@ export default function App() {
                                         placeholder={t.searchPlaceholder}
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className={`w-full bg-white border border-slate-300 pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 shadow-sm transition-all rounded-xl ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                        className={`w-full bg-white border border-slate-300 pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 shadow-sm transition-all rounded-xl ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                     />
                                 </div>
 
-                                <div className="flex flex-wrap gap-2 justify-center w-full md:w-auto">
+                                <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full md:w-auto">
                                     {[
                                         { id: 'all', label: t.all },
                                         { id: 'gaming', label: t.gaming },
@@ -495,7 +554,7 @@ export default function App() {
                                         <button
                                             key={cat.id}
                                             onClick={() => setSelectedCategory(cat.id)}
-                                            className={`px-4 py-2 text-xs font-bold transition-all duration-300 cursor-pointer rounded-xl shadow-sm ${selectedCategory === cat.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 scale-105' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}`}
+                                            className={`px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all duration-300 cursor-pointer rounded-lg sm:rounded-xl shadow-sm ${selectedCategory === cat.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 scale-105' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}`}
                                         >
                                             {cat.label}
                                         </button>
@@ -503,7 +562,7 @@ export default function App() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                                 {filteredProducts.map(product => {
                                     const cartItem = getCartItem(product.id);
                                     const qty = cartItem ? cartItem.qty : 0;
@@ -511,48 +570,48 @@ export default function App() {
                                     const productDesc = lang === 'ar' ? product.descAr : product.descEn;
 
                                     return (
-                                        <div key={product.id} className="bg-white border border-slate-200 overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between rounded-none group">
+                                        <div key={product.id} className="bg-white border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between rounded-none group">
                                             <div 
                                                 onClick={() => { setSelectedProduct(product); setView("detail"); }}
-                                                className="h-36 sm:h-48 overflow-hidden relative cursor-pointer bg-slate-100 rounded-none"
+                                                className="h-32 sm:h-48 overflow-hidden relative cursor-pointer bg-slate-100 rounded-none"
                                             >
                                                 <img 
                                                     src={product.image} 
                                                     alt={productName} 
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-none" 
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-none" 
                                                 />
-                                                <span className="absolute top-2 right-2 bg-white/90 backdrop-blur-md text-blue-600 font-bold text-[10px] sm:text-xs px-2.5 py-1 border border-slate-200 shadow-sm rounded-lg">
+                                                <span className="absolute top-2 right-2 bg-white/95 backdrop-blur-md text-blue-600 font-bold text-[9px] sm:text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 border border-slate-200 shadow-sm rounded-md">
                                                     {product.price} {t.currency}
                                                 </span>
                                             </div>
 
-                                            <div className="p-3 sm:p-5 flex flex-col flex-grow justify-between space-y-3">
-                                                <div onClick={() => { setSelectedProduct(product); setView("detail"); }} className={`cursor-pointer space-y-1 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-                                                    <h3 className="font-bold text-xs sm:text-base text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">{productName}</h3>
-                                                    <p className="text-slate-500 text-[10px] sm:text-xs line-clamp-2">{productDesc}</p>
+                                            <div className="p-2.5 sm:p-4 flex flex-col flex-grow justify-between space-y-2 sm:space-y-3">
+                                                <div onClick={() => { setSelectedProduct(product); setView("detail"); }} className={`cursor-pointer space-y-0.5 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                                                    <h3 className="font-bold text-[11px] sm:text-sm text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">{productName}</h3>
+                                                    <p className="text-slate-500 text-[9px] sm:text-xs line-clamp-2">{productDesc}</p>
                                                 </div>
 
                                                 <div>
                                                     {qty === 0 ? (
                                                         <button 
                                                             onClick={() => handleAddInitial(product)}
-                                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 sm:py-2.5 px-2 sm:px-4 text-[11px] sm:text-xs transition-all duration-300 flex items-center justify-center space-x-1 shadow-md hover:shadow-blue-600/25 cursor-pointer active:scale-95 rounded-xl"
+                                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 sm:py-2.5 px-2 text-[10px] sm:text-xs transition-all duration-300 flex items-center justify-center space-x-1 shadow-sm hover:shadow-blue-600/25 cursor-pointer active:scale-95 rounded-lg sm:rounded-xl"
                                                         >
                                                             <i className="fa-solid fa-cart-plus"></i>
                                                             <span>{t.add}</span>
                                                         </button>
                                                     ) : (
-                                                        <div className="flex items-center justify-between bg-slate-100 border border-slate-200 p-1 rounded-xl shadow-inner">
+                                                        <div className="flex items-center justify-between bg-slate-100 border border-slate-200 p-0.5 sm:p-1 rounded-lg sm:rounded-xl shadow-inner">
                                                             <button 
                                                                 onClick={() => updateQty(product.id, -1, false)}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer transition-colors shadow-sm rounded-lg"
+                                                                className="w-6 h-6 sm:w-8 sm:h-8 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer transition-colors shadow-sm rounded-md"
                                                             >
                                                                 -
                                                             </button>
-                                                            <span className="font-bold text-[11px] sm:text-xs text-blue-600">{qty}</span>
+                                                            <span className="font-bold text-[10px] sm:text-xs text-blue-600">{qty}</span>
                                                             <button 
                                                                 onClick={() => updateQty(product.id, 1, false)}
-                                                                className="w-7 h-7 sm:w-8 sm:h-8 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer transition-colors shadow-sm rounded-lg"
+                                                                className="w-6 h-6 sm:w-8 sm:h-8 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer transition-colors shadow-sm rounded-md"
                                                             >
                                                                 +
                                                             </button>
@@ -569,55 +628,55 @@ export default function App() {
 
                     {/* VIEW 2: PRODUCT DETAIL PAGE */}
                     {view === "detail" && selectedProduct && (
-                        <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
+                        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-fadeIn">
                             <div className="flex justify-end">
                                 <button 
                                     onClick={() => setView("home")}
-                                    className="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shadow-sm rounded-xl"
+                                    className="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shadow-sm rounded-xl"
                                 >
                                     <i className="fa-solid fa-arrow-left"></i>
                                     <span>{t.backToHome}</span>
                                 </button>
                             </div>
 
-                            <div className="bg-white border border-slate-200 overflow-hidden shadow-2xl rounded-2xl grid grid-cols-1 md:grid-cols-2">
+                            <div className="bg-white border border-slate-200 overflow-hidden shadow-xl rounded-2xl grid grid-cols-1 md:grid-cols-2">
                                 <div className="h-56 sm:h-72 md:h-full relative bg-slate-100 rounded-none">
                                     <img src={selectedProduct.image} alt={lang === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn} className="w-full h-full object-cover rounded-none" />
                                 </div>
-                                <div className={`p-6 md:p-8 flex flex-col justify-between space-y-4 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-                                    <div className="space-y-3">
-                                        <span className="inline-block bg-blue-50 text-blue-600 border border-blue-200 text-[10px] px-3 py-1 font-semibold uppercase tracking-wider rounded-lg">
+                                <div className={`p-5 sm:p-8 flex flex-col justify-between space-y-4 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                                    <div className="space-y-2 sm:space-y-3">
+                                        <span className="inline-block bg-blue-50 text-blue-600 border border-blue-200 text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md">
                                             {selectedProduct.category}
                                         </span>
-                                        <h1 className="text-2xl font-black text-slate-900">{lang === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn}</h1>
-                                        <p className="text-blue-600 font-bold text-lg">{selectedProduct.price} {t.currency}</p>
+                                        <h1 className="text-xl sm:text-2xl font-black text-slate-900">{lang === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn}</h1>
+                                        <p className="text-blue-600 font-bold text-base sm:text-lg">{selectedProduct.price} {t.currency}</p>
                                         <p className="text-slate-600 text-xs leading-relaxed">{lang === 'ar' ? selectedProduct.descAr : selectedProduct.descEn}</p>
                                     </div>
 
-                                    <div className="pt-4 border-t border-slate-200">
+                                    <div className="pt-3 border-t border-slate-200">
                                         {(() => {
                                             const itemInCart = getCartItem(selectedProduct.id);
                                             const qty = itemInCart ? itemInCart.qty : 0;
                                             return qty === 0 ? (
                                                 <button 
                                                     onClick={() => handleAddInitial(selectedProduct)}
-                                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 text-sm transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/25 cursor-pointer rounded-xl active:scale-95"
+                                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 sm:py-3 px-4 text-xs sm:text-sm transition-all duration-300 flex items-center justify-center space-x-2 shadow-md shadow-blue-600/25 cursor-pointer rounded-xl active:scale-95"
                                                 >
                                                     <i className="fa-solid fa-cart-plus"></i>
                                                     <span>{t.addToCart}</span>
                                                 </button>
                                             ) : (
-                                                <div className="flex items-center justify-between bg-slate-100 border border-slate-200 p-2 rounded-xl shadow-inner">
+                                                <div className="flex items-center justify-between bg-slate-100 border border-slate-200 p-1.5 sm:p-2 rounded-xl shadow-inner">
                                                     <button 
                                                         onClick={() => updateQty(selectedProduct.id, -1, false)}
-                                                        className="w-10 h-10 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-sm font-bold cursor-pointer shadow-sm rounded-xl"
+                                                        className="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer shadow-sm rounded-lg sm:rounded-xl"
                                                     >
                                                         -
                                                     </button>
-                                                    <span className="font-bold text-sm text-blue-600">{t.quantity}: {qty}</span>
+                                                    <span className="font-bold text-xs sm:text-sm text-blue-600">{t.quantity}: {qty}</span>
                                                     <button 
                                                         onClick={() => updateQty(selectedProduct.id, 1, false)}
-                                                        className="w-10 h-10 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-sm font-bold cursor-pointer shadow-sm rounded-xl"
+                                                        className="w-8 h-8 sm:w-10 sm:h-10 bg-white hover:bg-slate-200 text-slate-800 flex items-center justify-center text-xs sm:text-sm font-bold cursor-pointer shadow-sm rounded-lg sm:rounded-xl"
                                                     >
                                                         +
                                                     </button>
@@ -632,12 +691,12 @@ export default function App() {
 
                     {/* VIEW 3: CART & CHECKOUT PAGE */}
                     {view === "cart" && (
-                        <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn">
-                            <div className="flex items-center justify-between gap-3">
+                        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 animate-fadeIn">
+                            <div className="flex items-center justify-between gap-2">
                                 {cart.length > 0 && (
                                     <button 
                                         onClick={clearCart}
-                                        className="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-4 py-2 text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors rounded-xl shadow-sm"
+                                        className="bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors rounded-xl shadow-sm"
                                     >
                                         <i className="fa-solid fa-trash-can"></i>
                                         <span>{t.clearCart}</span>
@@ -645,46 +704,46 @@ export default function App() {
                                 )}
                                 <button 
                                     onClick={handleContinueShopping}
-                                    className="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2 text-xs font-semibold flex items-center space-x-2 cursor-pointer transition-colors shadow-sm rounded-xl ml-auto"
+                                    className="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold flex items-center space-x-1.5 cursor-pointer transition-colors shadow-sm rounded-xl ml-auto"
                                 >
                                     <i className="fa-solid fa-arrow-left"></i>
                                     <span>{t.continueShopping}</span>
                                 </button>
                             </div>
 
-                            <h1 className="text-xl font-black text-slate-900 flex items-center space-x-2">
+                            <h1 className="text-lg sm:text-xl font-black text-slate-900 flex items-center space-x-2">
                                 <i className="fa-solid fa-bag-shopping text-blue-600"></i>
                                 <span>{t.cartTitle}</span>
                             </h1>
 
                             {cart.length === 0 ? (
-                                <div className="text-center py-24 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-sm">
-                                    <i className="fa-solid fa-cart-shopping text-5xl text-slate-300"></i>
-                                    <p className="text-slate-500 text-sm">{t.emptyCart}</p>
+                                <div className="text-center py-16 sm:py-24 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-sm">
+                                    <i className="fa-solid fa-cart-shopping text-4xl sm:text-5xl text-slate-300"></i>
+                                    <p className="text-slate-500 text-xs sm:text-sm">{t.emptyCart}</p>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
+                                <div className="space-y-3 sm:space-y-4">
                                     {cart.map(item => {
                                         const itemName = lang === 'ar' ? item.nameAr : item.nameEn;
                                         return (
-                                            <div key={item.id} className="bg-white p-4 border border-slate-200 rounded-2xl flex items-center justify-between space-x-4 shadow-sm">
-                                                <div className={`flex-1 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-                                                    <h4 className="font-bold text-sm text-slate-900">{itemName}</h4>
-                                                    <p className="text-blue-600 text-xs font-semibold mt-1">{item.price} {t.currency} × {item.qty} = {item.price * item.qty} {t.currency}</p>
+                                            <div key={item.id} className="bg-white p-3 sm:p-4 border border-slate-200 rounded-xl sm:rounded-2xl flex items-center justify-between gap-2 shadow-sm">
+                                                <div className={`flex-1 min-w-0 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                                                    <h4 className="font-bold text-xs sm:text-sm text-slate-900 truncate">{itemName}</h4>
+                                                    <p className="text-blue-600 text-[11px] sm:text-xs font-semibold mt-0.5">{item.price} {t.currency} × {item.qty} = {item.price * item.qty} {t.currency}</p>
                                                 </div>
 
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="flex items-center space-x-2 bg-slate-100 border border-slate-200 p-1 rounded-xl">
+                                                <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                                                    <div className="flex items-center space-x-1 bg-slate-100 border border-slate-200 p-0.5 sm:p-1 rounded-lg">
                                                         <button 
                                                             onClick={() => updateQty(item.id, -1, true)} 
-                                                            className="w-7 h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-lg"
+                                                            className="w-6 h-6 sm:w-7 sm:h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-md"
                                                         >
                                                             -
                                                         </button>
-                                                        <span className="text-xs font-bold px-2 text-blue-600">{item.qty}</span>
+                                                        <span className="text-[11px] sm:text-xs font-bold px-1.5 text-blue-600">{item.qty}</span>
                                                         <button 
                                                             onClick={() => updateQty(item.id, 1, true)} 
-                                                            className="w-7 h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-lg"
+                                                            className="w-6 h-6 sm:w-7 sm:h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-md"
                                                         >
                                                             +
                                                         </button>
@@ -692,7 +751,7 @@ export default function App() {
 
                                                     <button 
                                                         onClick={() => removeCompletely(item.id)}
-                                                        className="w-9 h-9 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 flex items-center justify-center text-xs cursor-pointer transition-colors rounded-xl border border-rose-200"
+                                                        className="w-7 h-7 sm:w-8 sm:h-8 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 flex items-center justify-center text-xs cursor-pointer transition-colors rounded-lg sm:rounded-xl"
                                                         title="Remove item"
                                                     >
                                                         <i className="fa-solid fa-trash"></i>
@@ -703,8 +762,8 @@ export default function App() {
                                     })}
 
                                     {/* Order Summary & Customer Form */}
-                                    <div className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 mt-6 shadow-xl" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-                                        <div className="space-y-2 text-sm border-b border-slate-200 pb-4">
+                                    <div className="bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl space-y-3 sm:space-y-4 mt-4 sm:mt-6 shadow-lg" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                                        <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm border-b border-slate-200 pb-3">
                                             <div className="flex justify-between text-slate-600">
                                                 <span>{t.subtotal}</span>
                                                 <span className="font-semibold text-slate-900">{subTotalPrice} {t.currency}</span>
@@ -713,20 +772,20 @@ export default function App() {
                                                 <span>{t.shippingFee}</span>
                                                 <span className="font-semibold text-slate-900">{customerGovernorate ? `${currentShippingFee} ${t.currency}` : (lang === 'ar' ? 'يُحدد عند اختيار المحافظة' : 'Calculated at gov selection')}</span>
                                             </div>
-                                            <div className="flex justify-between text-base font-bold text-slate-900 pt-1">
+                                            <div className="flex justify-between text-sm sm:text-base font-bold text-slate-900 pt-1">
                                                 <span>{t.grandTotal}</span>
                                                 <span className="text-blue-600">{customerGovernorate ? `${finalTotalPrice} ${t.currency}` : `${subTotalPrice} ${t.currency}`}</span>
                                             </div>
                                         </div>
 
-                                        <form onSubmit={handleWhatsAppCheckout} className="space-y-3">
+                                        <form onSubmit={handleWhatsAppCheckout} className="space-y-2.5 sm:space-y-3">
                                             <input 
                                                 type="text" 
                                                 placeholder={t.namePlaceholder}
                                                 value={customerName}
                                                 onChange={(e) => setCustomerName(e.target.value)}
                                                 required
-                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
                                             <input 
                                                 type="tel"
@@ -739,14 +798,14 @@ export default function App() {
                                                     setCustomerPhone(val);
                                                 }}
                                                 required
-                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
                                             
                                             <select
                                                 value={customerGovernorate}
                                                 onChange={(e) => setCustomerGovernorate(e.target.value)}
                                                 required
-                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             >
                                                 <option value="" disabled>{t.selectGov}</option>
                                                 {governorates.map((gov, index) => (
@@ -762,14 +821,14 @@ export default function App() {
                                                 onChange={(e) => setCustomerAddress(e.target.value)}
                                                 required
                                                 rows="2"
-                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 resize-none text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 resize-none text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             ></textarea>
 
                                             <button 
                                                 type="submit"
-                                                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/25 text-xs cursor-pointer rounded-xl active:scale-95"
+                                                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 sm:py-3.5 px-4 transition-all duration-300 flex items-center justify-center space-x-2 shadow-md shadow-emerald-600/25 text-xs cursor-pointer rounded-xl active:scale-95"
                                             >
-                                                <i className="fa-brands fa-whatsapp text-base"></i>
+                                                <i className="fa-brands fa-whatsapp text-sm sm:text-base"></i>
                                                 <span>{t.sendWhatsApp}</span>
                                             </button>
                                         </form>
@@ -782,7 +841,7 @@ export default function App() {
                 </main>
 
                 {/* FOOTER SECTION */}
-                <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 w-full shadow-inner">
+                <footer className="bg-white border-t border-slate-200 py-3 sm:py-4 text-center text-[11px] sm:text-xs text-slate-500 w-full shadow-inner">
                     <p>{t.footer}</p>
                 </footer>
 
