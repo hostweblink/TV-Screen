@@ -455,6 +455,7 @@ export default function App() {
 
                 {/* HEADER / TOOLBAR */}
                 <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 md:px-10 py-2.5 sm:py-3.5 flex items-center justify-between shadow-sm w-full">
+                    {/* Store Logo & Title */}
                     <div 
                         className="flex items-center gap-2 sm:gap-3 cursor-pointer group select-none min-w-0" 
                         onClick={() => {
@@ -462,9 +463,16 @@ export default function App() {
                             setView("home");
                         }}
                     >
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-black text-base sm:text-xl shadow-md group-hover:scale-105 transition-transform duration-300 rounded-lg sm:rounded-xl">
-                            <i className="fa-solid fa-tv"></i>
+                        {/* Circular Logo */}
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 flex items-center justify-center overflow-hidden rounded-full shadow-md group-hover:scale-105 transition-transform duration-300 bg-white border border-slate-200">
+                            <img 
+                                src={process.env.PUBLIC_URL + '/logo.png'} 
+                                alt="Store Logo" 
+                                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+                                className="w-full h-full object-cover rounded-full"
+                            />
                         </div>
+
                         <div className="min-w-0">
                             <span className="text-sm sm:text-base md:text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent truncate block">
                                 {t.storeName}
@@ -523,7 +531,6 @@ export default function App() {
                             
                             {/* SEARCH & CATEGORIES (CENTERED & STACKED FOR PC & MOBILE) */}
                             <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 w-full max-w-2xl mx-auto my-2">
-                                {/* Search Bar (Centered on Top) */}
                                 <div className="relative w-full max-w-lg">
                                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
                                         <i className="fa-solid fa-magnifying-glass"></i>
@@ -537,7 +544,6 @@ export default function App() {
                                     />
                                 </div>
 
-                                {/* Category Filter Buttons (Directly Below & Centered) */}
                                 <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full">
                                     {[
                                         { id: 'all', label: t.all },
@@ -733,14 +739,14 @@ export default function App() {
                                                         <button 
                                                             onClick={() => updateQty(item.id, -1, true)} 
                                                             className="w-6 h-6 sm:w-7 sm:h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-md"
-                                                        >
+                                                            >
                                                             -
                                                         </button>
                                                         <span className="text-[11px] sm:text-xs font-bold px-1.5 text-blue-600">{item.qty}</span>
                                                         <button 
                                                             onClick={() => updateQty(item.id, 1, true)} 
                                                             className="w-6 h-6 sm:w-7 sm:h-7 bg-white hover:bg-slate-200 flex items-center justify-center text-xs text-slate-700 cursor-pointer transition-colors shadow-sm rounded-md"
-                                                        >
+                                                            >
                                                             +
                                                         </button>
                                                     </div>
