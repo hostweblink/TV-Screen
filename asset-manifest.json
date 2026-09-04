@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/TV-Screen/static/css/main.e6c13ad2.css",
-    "main.js": "/TV-Screen/static/js/main.2a1b5457.js",
+    "main.js": "/TV-Screen/static/js/main.c6a7320c.js",
     "static/js/453.84bc36a6.chunk.js": "/TV-Screen/static/js/453.84bc36a6.chunk.js",
     "index.html": "/TV-Screen/index.html",
     "main.e6c13ad2.css.map": "/TV-Screen/static/css/main.e6c13ad2.css.map",
-    "main.2a1b5457.js.map": "/TV-Screen/static/js/main.2a1b5457.js.map",
+    "main.c6a7320c.js.map": "/TV-Screen/static/js/main.c6a7320c.js.map",
     "453.84bc36a6.chunk.js.map": "/TV-Screen/static/js/453.84bc36a6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.2a1b5457.js"
+    "static/js/main.c6a7320c.js"
   ]
 }
