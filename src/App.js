@@ -173,9 +173,6 @@ const translations = {
         tv: "تلفزيونات ذكية",
         ultrawide: "عريض جداً",
         portable: "محمولة",
-        heroBadge: "تشكيلة الشاشات الفاخرة 🖥️",
-        heroTitle: "اكتشف الشاشات والتلفزيونات الاحترافية",
-        heroDesc: "تصفح شاشات الألعاب المتطورة، تلفزيونات 4K الذكية، والشاشات العريضة مع إتمام الطلب فوراً عبر الواتساب.",
         add: "إضافة",
         addToCart: "إضافة للسلة",
         backToHome: "العودة للرئيسية",
@@ -205,9 +202,6 @@ const translations = {
         tv: "Smart TVs",
         ultrawide: "Ultrawide",
         portable: "Portable",
-        heroBadge: "Ultimate Display Collection 🖥️",
-        heroTitle: "Discover Professional Screens & TVs",
-        heroDesc: "Explore high-end gaming monitors, 4K smart TVs, and ultra-wide displays with instant checkout via WhatsApp.",
         add: "Add",
         addToCart: "Add to Cart",
         backToHome: "Back to Home",
@@ -240,12 +234,11 @@ export default function App() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
 
-    // Track if app is installed / opened in Standalone mode
+    // Standalone app / PWA state
     const [isAppInstalled, setIsAppInstalled] = useState(false);
-    // PWA Install Prompt State
     const [deferredPrompt, setDeferredPrompt] = useState(null);
 
-    // Cart State from LocalStorage
+    // Cart state
     const [cart, setCart] = useState(() => {
         try {
             const savedCart = localStorage.getItem('store_cart');
@@ -256,13 +249,12 @@ export default function App() {
         }
     });
     
-    // Customer form states from LocalStorage
+    // Customer form states
     const [customerName, setCustomerName] = useState(() => localStorage.getItem('store_cust_name') || "");
     const [customerPhone, setCustomerPhone] = useState(() => localStorage.getItem('store_cust_phone') || "");
     const [customerGovernorate, setCustomerGovernorate] = useState(() => localStorage.getItem('store_cust_gov') || "");
     const [customerAddress, setCustomerAddress] = useState(() => localStorage.getItem('store_cust_addr') || "");
 
-    // Sync States to LocalStorage
     useEffect(() => {
         localStorage.setItem('store_cart', JSON.stringify(cart));
     }, [cart]);
@@ -278,7 +270,6 @@ export default function App() {
         localStorage.setItem('store_cust_addr', customerAddress);
     }, [customerName, customerPhone, customerGovernorate, customerAddress]);
 
-    // Check if running as standalone app (Installed PWA on iOS/Android/Desktop)
     useEffect(() => {
         const isStandalone = 
             window.matchMedia('(display-mode: standalone)').matches || 
@@ -298,7 +289,6 @@ export default function App() {
 
     const t = translations[lang];
 
-    // Handler to Download APK or trigger PWA install
     const handleDownloadApp = () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -371,7 +361,6 @@ export default function App() {
         localStorage.removeItem('store_cart');
     };
 
-    // Clean up items with 0 quantity when returning to home from cart
     const handleContinueShopping = () => {
         setCart(prev => prev.filter(item => item.qty > 0));
         setView("home");
@@ -464,9 +453,8 @@ export default function App() {
         <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans w-full max-w-full overflow-x-hidden transition-all duration-300">
             <div className="w-full flex flex-col min-h-screen">
 
-                {/* ================= COMPACT TOOLBAR / HEADER ================= */}
+                {/* HEADER / TOOLBAR */}
                 <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 md:px-10 py-2.5 sm:py-3.5 flex items-center justify-between shadow-sm w-full">
-                    {/* Store Logo & Title */}
                     <div 
                         className="flex items-center gap-2 sm:gap-3 cursor-pointer group select-none min-w-0" 
                         onClick={() => {
@@ -489,9 +477,7 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* Right Toolbar Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        {/* Download App Button (Hidden completely if running inside installed app) */}
                         {!isAppInstalled && (
                             <button 
                                 onClick={handleDownloadApp}
@@ -503,7 +489,6 @@ export default function App() {
                             </button>
                         )}
 
-                        {/* Language Switcher */}
                         <button 
                             onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
                             title={lang === 'ar' ? 'Switch to English' : 'التحويل للعربية'}
@@ -514,7 +499,6 @@ export default function App() {
                             <span className="sm:hidden text-[10px] font-black uppercase">{lang === 'ar' ? 'EN' : 'ع'}</span>
                         </button>
 
-                        {/* Cart Button with badge */}
                         <button 
                             onClick={() => setView("cart")}
                             className="relative bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-2 sm:px-4 sm:py-2 flex items-center gap-1.5 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 group rounded-lg sm:rounded-xl"
@@ -536,21 +520,11 @@ export default function App() {
                     {/* ================= VIEW 1: HOME PAGE ================= */}
                     {view === "home" && (
                         <div className="space-y-6 w-full animate-fadeIn">
-                            {/* Hero Banner */}
-                            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white p-5 md:p-10 text-center space-y-3 shadow-xl rounded-2xl overflow-hidden relative">
-                                <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
-                                <div className="relative z-10 space-y-2 sm:space-y-3">
-                                    <span className="inline-block bg-white/20 text-white border border-white/30 text-[10px] sm:text-xs px-2.5 py-0.5 sm:py-1 font-semibold uppercase tracking-wider backdrop-blur-sm rounded-md sm:rounded-lg">
-                                        {t.heroBadge}
-                                    </span>
-                                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-black leading-tight">{t.heroTitle}</h1>
-                                    <p className="text-blue-100 text-xs sm:text-sm md:text-base max-w-2xl mx-auto">{t.heroDesc}</p>
-                                </div>
-                            </div>
-
-                            {/* Search & Category Filter */}
-                            <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-center justify-between">
-                                <div className="relative w-full md:w-96">
+                            
+                            {/* SEARCH & CATEGORIES (CENTERED & STACKED FOR PC & MOBILE) */}
+                            <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 w-full max-w-2xl mx-auto my-2">
+                                {/* Search Bar (Centered on Top) */}
+                                <div className="relative w-full max-w-lg">
                                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
                                         <i className="fa-solid fa-magnifying-glass"></i>
                                     </span>
@@ -563,7 +537,8 @@ export default function App() {
                                     />
                                 </div>
 
-                                <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full md:w-auto">
+                                {/* Category Filter Buttons (Directly Below & Centered) */}
+                                <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full">
                                     {[
                                         { id: 'all', label: t.all },
                                         { id: 'gaming', label: t.gaming },
@@ -574,7 +549,7 @@ export default function App() {
                                         <button
                                             key={cat.id}
                                             onClick={() => setSelectedCategory(cat.id)}
-                                            className={`px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all duration-300 cursor-pointer rounded-lg sm:rounded-xl shadow-sm ${selectedCategory === cat.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 scale-105' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}`}
+                                            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold transition-all duration-300 cursor-pointer rounded-lg sm:rounded-xl shadow-sm ${selectedCategory === cat.id ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 scale-105' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}`}
                                         >
                                             {cat.label}
                                         </button>
@@ -582,7 +557,7 @@ export default function App() {
                                 </div>
                             </div>
 
-                            {/* Responsive Products Grid (12 Items) */}
+                            {/* Responsive Products Grid */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                                 {filteredProducts.map(product => {
                                     const cartItem = getCartItem(product.id);
