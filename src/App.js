@@ -67,11 +67,41 @@ const initialProducts = [
     }
 ];
 
-// Flat shipping fee applied to orders
-const SHIPPING_FEE = 50;
+// ==========================================
+// 2. EGYPTIAN GOVERNORATES (Bilingual list)
+// ==========================================
+const governorates = [
+    { ar: "القاهرة", en: "Cairo" },
+    { ar: "الجيزة", en: "Giza" },
+    { ar: "القليوبية", en: "Qalyubia" },
+    { ar: "الإسكندرية", en: "Alexandria" },
+    { ar: "الدقهلية", en: "Dakahlia" },
+    { ar: "الشرقية", en: "Sharqia" },
+    { ar: "المنوفية", en: "Monufia" },
+    { ar: "الغربية", en: "Gharbia" },
+    { ar: "البحيرة", en: "Beheira" },
+    { ar: "كفر الشيخ", en: "Kafr El Sheikh" },
+    { ar: "دمياط", en: "Damietta" },
+    { ar: "بورسعيد", en: "Port Said" },
+    { ar: "الإسماعيلية", en: "Ismailia" },
+    { ar: "السويس", en: "Suez" },
+    { ar: "الفيوم", en: "Fayoum" },
+    { ar: "بني سويف", en: "Beni Suef" },
+    { ar: "المنيا", en: "Minya" },
+    { ar: "أسيوط", en: "Asyut" },
+    { ar: "سوهاج", en: "Sohag" },
+    { ar: "قنا", en: "Qena" },
+    { ar: "الأقصر", en: "Luxor" },
+    { ar: "أسوان", en: "Aswan" },
+    { ar: "البحر الأحمر", en: "Red Sea" },
+    { ar: "الوادي الجديد", en: "New Valley" },
+    { ar: "مطروح", en: "Matrouh" },
+    { ar: "شمال سيناء", en: "North Sinai" },
+    { ar: "جنوب سيناء", en: "South Sinai" }
+];
 
 // ==========================================
-// 2. TRANSLATIONS DICTIONARY
+// 3. TRANSLATIONS DICTIONARY
 // ==========================================
 const translations = {
     ar: {
@@ -98,7 +128,8 @@ const translations = {
         grandTotal: "الإجمالي النهائي:",
         namePlaceholder: "الاسم الكامل",
         phonePlaceholder: "رقم الهاتف",
-        addressPlaceholder: "عنوان الشحن بالتفصيل",
+        addressPlaceholder: "عنوان الشحن بالتفصيل (الشارع، رقم العمارة)",
+        selectGov: "اختر المحافظة",
         sendWhatsApp: "إرسال الطلب عبر الواتساب (01127808865)",
         cartTitle: "سلة التسوق وإتمام الطلب",
         currency: "EGP",
@@ -128,7 +159,8 @@ const translations = {
         grandTotal: "Grand Total:",
         namePlaceholder: "Full Name",
         phonePlaceholder: "Phone number",
-        addressPlaceholder: "Detailed Shipping Address",
+        addressPlaceholder: "Detailed Shipping Address (Street, Building No.)",
+        selectGov: "Select Governorate",
         sendWhatsApp: "Send Order via WhatsApp (01127808865)",
         cartTitle: "Shopping Cart & Checkout",
         currency: "EGP",
@@ -138,7 +170,7 @@ const translations = {
 
 export default function App() {
     // ==========================================
-    // 3. STATE MANAGEMENT (React Hooks)
+    // 4. STATE MANAGEMENT (React Hooks)
     // ==========================================
     const [lang, setLang] = useState("ar"); // Default language Arabic
     const [view, setView] = useState("home"); // "home" | "detail" | "cart"
@@ -150,12 +182,13 @@ export default function App() {
     // Customer form states
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
+    const [customerGovernorate, setCustomerGovernorate] = useState("");
     const [customerAddress, setCustomerAddress] = useState("");
 
     const t = translations[lang];
 
     // ==========================================
-    // 4. SEARCH & FILTER LOGIC
+    // 5. SEARCH & FILTER LOGIC
     // ==========================================
     const filteredProducts = useMemo(() => {
         return initialProducts.filter(product => {
@@ -171,7 +204,7 @@ export default function App() {
     const getCartItem = (id) => cart.find(item => item.id === id);
 
     // ==========================================
-    // 5. CART & QUANTITY MANAGEMENT FUNCTIONS
+    // 6. CART & QUANTITY MANAGEMENT FUNCTIONS
     // ==========================================
     const handleAddInitial = (product) => {
         setCart(prev => {
@@ -207,15 +240,31 @@ export default function App() {
     };
 
     // ==========================================
-    // 6. CART CALCULATIONS
+    // 7. CART & SHIPPING CALCULATIONS
     // ==========================================
     const activeCartItems = cart.filter(item => item.qty > 0);
     const totalItemsCount = activeCartItems.reduce((sum, item) => sum + item.qty, 0);
     const subTotalPrice = activeCartItems.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0);
-    const finalTotalPrice = subTotalPrice > 0 ? subTotalPrice + SHIPPING_FEE : 0;
+
+    // Dynamic Shipping Fee based on Governorate (Cairo, Giza, Qalyubia = 100, Others = 150)
+    const getShippingFee = () => {
+        if (!customerGovernorate) return 0;
+        const lowerGov = customerGovernorate.toLowerCase();
+        if (
+            lowerGov.includes("القاهرة") || lowerGov.includes("cairo") ||
+            lowerGov.includes("الجيزة") || lowerGov.includes("giza") ||
+            lowerGov.includes("القليوبية") || lowerGov.includes("qalyubia")
+        ) {
+            return 100;
+        }
+        return 150;
+    };
+
+    const currentShippingFee = customerGovernorate ? getShippingFee() : 0;
+    const finalTotalPrice = subTotalPrice > 0 ? subTotalPrice + currentShippingFee : 0;
 
     // ==========================================
-    // 7. WHATSAPP CHECKOUT HANDLER
+    // 8. WHATSAPP CHECKOUT HANDLER
     // ==========================================
     const handleWhatsAppCheckout = (e) => {
         e.preventDefault();
@@ -224,7 +273,7 @@ export default function App() {
             alert(lang === 'ar' ? "يرجى إضافة منتجات للسلة أولاً." : "Please add items to your cart.");
             return;
         }
-        if (!customerName || !customerPhone || !customerAddress) {
+        if (!customerName || !customerPhone || !customerGovernorate || !customerAddress) {
             alert(lang === 'ar' ? "يرجى تعبئة كافة بيانات الشحن المطلوبة." : "Please fill in all shipping details.");
             return;
         }
@@ -234,6 +283,7 @@ export default function App() {
             message = `*طلب جديد من TV Sreen*\n\n`;
             message += `*العميل:* ${customerName}\n`;
             message += `*الهاتف:* ${customerPhone}\n`;
+            message += `*المحافظة:* ${customerGovernorate}\n`;
             message += `*العنوان:* ${customerAddress}\n\n`;
             message += `*المنتجات المطلوبة:*\n`;
             
@@ -241,13 +291,15 @@ export default function App() {
                 message += `${index + 1}. ${item.nameAr} (الكمية: ${item.qty}) - المجموع الفرعي: ${item.price * item.qty} ${t.currency}\n`;
             });
 
-            message += `\n*رسوم الشحن:* ${SHIPPING_FEE} ${t.currency}\n`;
-            message += `*الإجمالي النهائي:* ${finalTotalPrice} ${t.currency}\n\n`;
+            message += `\n*المجموع الفرعي:* ${subTotalPrice} ${t.currency}\n`;
+            message += `*رسوم الشحن:* ${currentShippingFee} ${t.currency}\n`;
+            message += `*الإجمالي النهائي بالشحن:* ${finalTotalPrice} ${t.currency}\n\n`;
             message += `يرجى تأكيد الطلب. شكراً لك!`;
         } else {
             message = `*New Order from TV Screen Store*\n\n`;
             message += `*Customer:* ${customerName}\n`;
             message += `*Phone:* ${customerPhone}\n`;
+            message += `*Governorate:* ${customerGovernorate}\n`;
             message += `*Address:* ${customerAddress}\n\n`;
             message += `*Ordered Items:*\n`;
             
@@ -255,8 +307,9 @@ export default function App() {
                 message += `${index + 1}. ${item.nameEn} (Qty: ${item.qty}) - Subtotal: ${item.price * item.qty} ${t.currency}\n`;
             });
 
-            message += `\n*Shipping Fee:* ${SHIPPING_FEE} ${t.currency}\n`;
-            message += `*Grand Total:* ${finalTotalPrice} ${t.currency}\n\n`;
+            message += `\n*Subtotal:* ${subTotalPrice} ${t.currency}\n`;
+            message += `*Shipping Fee:* ${currentShippingFee} ${t.currency}\n`;
+            message += `*Grand Total with Shipping:* ${finalTotalPrice} ${t.currency}\n\n`;
             message += `Please confirm the order. Thank you!`;
         }
 
@@ -268,7 +321,7 @@ export default function App() {
     };
 
     // ==========================================
-    // 8. RENDER JSX COMPONENT
+    // 9. RENDER JSX COMPONENT
     // ==========================================
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans w-full transition-all duration-300">
@@ -443,7 +496,7 @@ export default function App() {
                     {/* ================= VIEW 2: PRODUCT DETAIL PAGE ================= */}
                     {view === "detail" && selectedProduct && (
                         <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
-                            {/* Back to Home button moved to the other side (right) */}
+                            {/* Back to Home button on the right side */}
                             <div className="flex justify-end">
                                 <button 
                                     onClick={() => setView("home")}
@@ -455,7 +508,8 @@ export default function App() {
                             </div>
 
                             <div className="bg-white border border-slate-200 overflow-hidden shadow-2xl rounded-2xl grid grid-cols-1 md:grid-cols-2">
-                                <div className="h-72 md:h-full relative bg-slate-100 rounded-none">
+                                {/* Optimized image size for phone & laptop, strictly sharp corners (rounded-none) */}
+                                <div className="h-56 sm:h-72 md:h-full relative bg-slate-100 rounded-none">
                                     <img src={selectedProduct.image} alt={lang === 'ar' ? selectedProduct.nameAr : selectedProduct.nameEn} className="w-full h-full object-cover rounded-none" />
                                 </div>
                                 <div className={`p-6 md:p-8 flex flex-col justify-between space-y-4 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
@@ -585,11 +639,11 @@ export default function App() {
                                             </div>
                                             <div className="flex justify-between text-slate-600">
                                                 <span>{t.shippingFee}</span>
-                                                <span className="font-semibold text-slate-900">{SHIPPING_FEE} {t.currency}</span>
+                                                <span className="font-semibold text-slate-900">{customerGovernorate ? `${currentShippingFee} ${t.currency}` : (lang === 'ar' ? 'يُحدد عند اختيار المحافظة' : 'Calculated at gov selection')}</span>
                                             </div>
                                             <div className="flex justify-between text-base font-bold text-slate-900 pt-1">
                                                 <span>{t.grandTotal}</span>
-                                                <span className="text-blue-600">{finalTotalPrice} {t.currency}</span>
+                                                <span className="text-blue-600">{customerGovernorate ? `${finalTotalPrice} ${t.currency}` : `${subTotalPrice} ${t.currency}`}</span>
                                             </div>
                                         </div>
 
@@ -615,6 +669,22 @@ export default function App() {
                                                 required
                                                 className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
                                             />
+                                            
+                                            {/* Governorate Search/Select Dropdown */}
+                                            <select
+                                                value={customerGovernorate}
+                                                onChange={(e) => setCustomerGovernorate(e.target.value)}
+                                                required
+                                                className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 text-slate-900 transition-all ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                            >
+                                                <option value="" disabled>{t.selectGov}</option>
+                                                {governorates.map((gov, index) => (
+                                                    <option key={index} value={lang === 'ar' ? gov.ar : gov.en}>
+                                                        {lang === 'ar' ? gov.ar : gov.en}
+                                                    </option>
+                                                ))}
+                                            </select>
+
                                             <textarea 
                                                 placeholder={t.addressPlaceholder}
                                                 value={customerAddress}
